@@ -25,7 +25,7 @@ It allows full styling from XML, including text colors, fonts, indicator color/h
 # **Preview**
 ---
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/289ed192-053b-42fd-94c0-87630458d3cf"
+  <img src="https://github.com/user-attachments/assets/9504273a-4309-438e-9ec1-bd8a2ec5bced"
        alt="Demo GIF"
        width="200">
 
