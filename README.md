@@ -18,9 +18,7 @@ It allows full styling from XML, including text colors, fonts, indicator color/h
 
 - Optional ripple effect on tab click.
 
-- Selected tab text color updates automatically.
 
-- Clicking a tab moves to the correct fragment/page.
 
   ---
 
