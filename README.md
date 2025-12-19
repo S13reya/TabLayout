@@ -44,7 +44,7 @@ maven { url = uri("https://jitpack.io") }
 
 ```gradle
 dependencies {
- https://github.com/Excelsior-Technologies-Community/TabLayout.git
+	        implementation 'com.github.Excelsior-Technologies-Community:TabLayout:1.0.0'
 
 }
 ```
