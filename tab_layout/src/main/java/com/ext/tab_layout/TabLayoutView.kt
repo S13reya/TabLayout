@@ -1,6 +1,7 @@
 package com.ext.tab_layout
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.Gravity
@@ -27,6 +28,7 @@ class TabLayoutView @JvmOverloads constructor(
     private var tabSelectedTextColor: Int = 0xFFFF0000.toInt()
     private var tabTextSizeSp: Float = 14f
     private var tabFontResId: Int = 0
+    private var tabFontName: String? = null
     private var tabIndicatorColor: Int = 0xFFFF0000.toInt()
     private var tabIndicatorHeight: Float = 4f
     private var tabRippleEnabled: Boolean = true
@@ -39,6 +41,7 @@ class TabLayoutView @JvmOverloads constructor(
             val dimension = ta.getDimension(R.styleable.ExtTabLayoutView_tabTextSize, tabTextSizeSp * resources.displayMetrics.scaledDensity)
             tabTextSizeSp = dimension / resources.displayMetrics.scaledDensity
             tabFontResId = ta.getResourceId(R.styleable.ExtTabLayoutView_tabFontFamily, 0)
+            tabFontName = ta.getString(R.styleable.ExtTabLayoutView_tabFontFamily)
             tabIndicatorColor = ta.getColor(R.styleable.ExtTabLayoutView_tabIndicatorColor, tabIndicatorColor)
             tabIndicatorHeight = ta.getDimension(R.styleable.ExtTabLayoutView_tabIndicatorHeight, tabIndicatorHeight)
             tabRippleEnabled = ta.getBoolean(R.styleable.ExtTabLayoutView_tabRippleEnabled, tabRippleEnabled)
@@ -49,16 +52,19 @@ class TabLayoutView @JvmOverloads constructor(
     fun setTabs(activity: FragmentActivity, fragments: List<Fragment>, tabTitles: List<String>) {
         require(fragments.size == tabTitles.size) { "Fragments size must match tabTitles size" }
 
+        // Set adapter
         binding.viewPager.adapter = TabPagerAdapter(activity, fragments)
 
+        // Attach TabLayout with ViewPager
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
             tab.text = tabTitles[position]
         }.attach()
 
         applyTabTextStyle()
         applyIndicator()
+        applyRipple()
 
-        // Update text colors on selection
+        // Tab selection listener
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 binding.viewPager.currentItem = tab.position
@@ -66,11 +72,10 @@ class TabLayoutView @JvmOverloads constructor(
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {}
-
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        // Set initial selection color
+        // Set initial selected tab color
         updateTabTextColors(binding.tabLayout.selectedTabPosition)
     }
 
@@ -95,7 +100,18 @@ class TabLayoutView @JvmOverloads constructor(
                 text = tab.text
                 setTextSize(TypedValue.COMPLEX_UNIT_SP, tabTextSizeSp)
                 setTextColor(tabTextColor)
-                if (tabFontResId != 0) typeface = ResourcesCompat.getFont(context, tabFontResId)
+
+                // Load font: resource font or system font name
+                typeface = when {
+                    tabFontResId != 0 -> ResourcesCompat.getFont(context, tabFontResId)
+                    !tabFontName.isNullOrEmpty() -> try {
+                        Typeface.create(tabFontName, Typeface.NORMAL)
+                    } catch (e: Exception) {
+                        Typeface.DEFAULT
+                    }
+                    else -> Typeface.DEFAULT
+                }
+
                 gravity = Gravity.CENTER
                 textAlignment = TextView.TEXT_ALIGNMENT_CENTER
             }
@@ -118,5 +134,10 @@ class TabLayoutView @JvmOverloads constructor(
     private fun applyIndicator() {
         binding.tabLayout.setSelectedTabIndicatorHeight(tabIndicatorHeight.toInt())
         binding.tabLayout.setSelectedTabIndicatorColor(tabIndicatorColor)
+    }
+
+    private fun applyRipple() {
+        binding.tabLayout.tabRippleColor = if (tabRippleEnabled) null
+        else ContextCompat.getColorStateList(context, android.R.color.transparent)
     }
 }

@@ -3,7 +3,7 @@
         <attr name="tabTextColor" format="color" />
         <attr name="tabSelectedTextColor" format="color" />
         <attr name="tabTextSize" format="dimension" />
-        <attr name="tabFontFamily" format="reference" />
+        <attr name="tabFontFamily" format="reference|string" />
         <attr name="tabIndicatorColor" format="color" />
         <attr name="tabIndicatorHeight" format="dimension" />
         <attr name="tabRippleEnabled" format="boolean" />
